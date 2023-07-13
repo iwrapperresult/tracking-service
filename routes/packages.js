@@ -7,23 +7,24 @@ const  getCoordinatesFromAddress =  require('../location/index');
 // Endpoint to create a new package
 router.post('/', async (req, res) => {
   try {
-    const locationFromAddress = await getCoordinatesFromAddress(req.body.from_address);
-    const locationToAddress = await getCoordinatesFromAddress(req.body.to_address);
+    const formData = req.body.formData;
+    const locationFromAddress = await getCoordinatesFromAddress(formData.from_address);
+    const locationToAddress = await getCoordinatesFromAddress(formData.to_address);
     const package = new Package({
-        active_delivery: req.body.active_delivery,
-        description: req.body.description,
-        weight: req.body.weight,
-        width: req.body.width,
-        height: req.body.height,
-        depth: req.body.depth,
-        from_name: req.body.from_name,
-        from_address: req.body.from_address,
+        active_delivery: true,
+        description: formData.description,
+        weight: formData.weight,
+        width: formData.width,
+        height: formData.height,
+        depth: formData.depth,
+        from_name: formData.from_name,
+        from_address: formData.from_address,
         from_location: {
           lat: locationFromAddress.latitude,
           lng: locationFromAddress.longitude
         },
-        to_name: req.body.to_name,
-        to_address: req.body.to_address,
+        to_name: formData.to_name,
+        to_address: formData.to_address,
         to_location: {
           lat: locationToAddress.latitude,
           lng: locationToAddress.longitude

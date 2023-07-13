@@ -52,7 +52,8 @@ const startDelivery = (pickupTime, givenStatus) =>{
 // Endpoint to create a new delivery
 router.post('/', async (req, res) => {
   try {
-    const toDoCreate = await createDelivery(req.body, req.body?.package_id);
+    const formData = req.body.formData;
+    const toDoCreate = await createDelivery(formData, formData?.package_id);
     let message = " ";
     if (req.body?.status === "picked-up"){
       message = "package picked";
@@ -67,8 +68,17 @@ router.post('/', async (req, res) => {
     }
     res.json({code: 200, message: message, data: toDoCreate});
   } catch (error) {
-    console.log(error)
     res.status(500).json({ error: error.message });
+  }
+});
+
+// Endpoint to retrieve deliveries details
+router.get('/', async (req, res) => {
+  try{
+      const delivery = await Delivery.find();
+      res.json({code: 200, message: "success", data: delivery});
+  } catch(error) {
+      res.status(500).json({error: error.message});
   }
 });
 
@@ -87,8 +97,8 @@ router.put('/:delivery_id/status', async (req, res) => {
   try {
     const { delivery_id } = req.params;
     const { status } = req.body;
-    const updatedDelivery = await Delivery.findOneAndUpdate({ delivery_id }, { status }, { new: true });
-    res.json({code: 200, message: "status updated", data: updatedDelivery});
+    const updatedDelivery = await Delivery.findOneAndUpdate({ _id: delivery_id }, { status }, { new: true });
+    res.json({ code: 200, message: "Status updated", data: updatedDelivery });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
